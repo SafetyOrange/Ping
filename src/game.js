@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.WEBGL, 'PING!', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'PING!', { preload: preload, create: create, update: update, render: render });
 var ballVel = new PIXI.Point(500,0);
 var paddleMat, ballMat;
 
@@ -49,6 +49,7 @@ function create() {
 
     ////Basic pong ball
     ball.body.setZeroDamping();
+    ball.body.fixedRotation = true;
     ball.body.velocity.x = ballVel.x;
     ball.body.velocity.y = ballVel.y;
 
