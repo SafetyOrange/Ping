@@ -1,7 +1,4 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'PING!', { preload: preload, create: create, update: update, render: render });
-var ballVel = new PIXI.Point(500,0);
-var paddleMat, ballMat;
-
 
 function preload() {
 
@@ -10,12 +7,15 @@ function preload() {
 
 }
 
-var ball;
-var paddle;
+var ball, paddle1, paddle2;
+var ballVel = new PIXI.Point(500,20);
+var paddleMoveSpeed = 10;
+var paddleMat, ballMat;
 
 function create() {
 
     //Initialize
+    game.world.setBounds(-300, 0, game.width + 600, game.height);
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.stage.backgroundColor = '#000000';
 
@@ -34,18 +34,23 @@ function create() {
 
     ////Material & Basic Collision
     paddleMat = game.physics.p2.createMaterial('paddleMat');
+    worldMat = game.physics.p2.createMaterial('worlddMat');
     ballMat = game.physics.p2.createMaterial('ballMat', ball.body);
     var paddleBallCollision = game.physics.p2.createContactMaterial(ballMat, paddleMat);
+    var worldBallCollision = game.physics.p2.createContactMaterial(ballMat, worldMat);
+
     paddleBallCollision.restitution = 1;
+    worldBallCollision.restitution = 1;
 
     paddle1.body.setMaterial(paddleMat);
     paddle2.body.setMaterial(paddleMat);
 
+    //  4 trues = the 4 faces of the world in left, right, top, bottom order
+    game.physics.p2.setWorldMaterial(worldMat, true, true, true, true);
+
     ////Freeze paddle body in place
     paddle1.body.static = true;
-    paddle1.body.allowGravity = false;
     paddle2.body.static = true;
-    paddle2.body.allowGravity = false;
 
     ////Basic pong ball
     ball.body.setZeroDamping();
@@ -57,18 +62,41 @@ function create() {
 
 function update() {
 
-
-}
-
-function collisionHandler (obj1, obj2) {
-    ball.body.velocity.x *= -1;
+    handleInput();
 
 }
 
 function render() {
 
-    // game.debug.body(ball);
-    // game.debug.body(paddle1);
-    // game.debug.body(paddle2);
+    game.debug.body(ball);
+    game.debug.body(paddle1);
+    game.debug.body(paddle2);
+
+}
+
+function handleInput(){
+
+  //Left Side
+  if (game.input.keyboard.isDown(Phaser.Keyboard.W) && game.input.keyboard.isDown(Phaser.Keyboard.S)) {
+    //Do nothing. It's about that that finesse.
+  }
+  else if (game.input.keyboard.isDown(Phaser.Keyboard.W)) {
+    paddle1.body.y -= paddleMoveSpeed;
+  }
+  else if (game.input.keyboard.isDown(Phaser.Keyboard.S)) {
+    paddle1.body.y += paddleMoveSpeed;
+  }
+
+
+  //Right Side
+  if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
+    //Do nothing. It's about that that finesse.
+  }
+  else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+    paddle2.body.y -= paddleMoveSpeed;
+  }
+  else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
+    paddle2.body.y += paddleMoveSpeed;
+  }
 
 }
