@@ -10,7 +10,7 @@ function preload() {
 var ball, paddle1, paddle2;
 var ballVel = new PIXI.Point(500,20);
 var paddleMoveSpeed = 500;
-var paddleMat, ballMat;
+var mat_default;
 
 function create() {
 
@@ -30,24 +30,21 @@ function create() {
     paddle2.scale = new PIXI.Point(.5,.5);
 
     //Set Physics
-    game.physics.p2.enable([ball,paddle1, paddle2], true);
+    game.physics.p2.enable([ball,paddle1, paddle2], false);
     ball.body.setCircle(17);
 
     ////Material & Basic Collision
-    paddleMat = game.physics.p2.createMaterial('paddleMat');
-    worldMat = game.physics.p2.createMaterial('worlddMat');
-    ballMat = game.physics.p2.createMaterial('ballMat', ball.body);
-    var paddleBallCollision = game.physics.p2.createContactMaterial(ballMat, paddleMat);
-    var worldBallCollision = game.physics.p2.createContactMaterial(ballMat, worldMat);
+    mat_default = game.physics.p2.createMaterial('default');
+    var col_default_default = game.physics.p2.createContactMaterial(mat_default, mat_default);
 
-    paddleBallCollision.restitution = 1;
-    worldBallCollision.restitution = 1;
+    col_default_default.restitution = 1;
 
-    paddle1.body.setMaterial(paddleMat);
-    paddle2.body.setMaterial(paddleMat);
+    ball.body.setMaterial(mat_default);
+    paddle1.body.setMaterial(mat_default);
+    paddle2.body.setMaterial(mat_default);
 
     //  4 trues = the 4 faces of the world in left, right, top, bottom order
-    game.physics.p2.setWorldMaterial(worldMat, true, true, true, true);
+    game.physics.p2.setWorldMaterial(mat_default, true, true, true, true);
 
     ////Freeze paddle body in place
     paddle1.body.kinematic = true;
