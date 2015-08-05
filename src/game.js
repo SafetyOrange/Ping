@@ -9,7 +9,7 @@ function preload() {
 
 var ball, paddle1, paddle2;
 var ballVel = new PIXI.Point(500,20);
-var paddleMoveSpeed = 10;
+var paddleMoveSpeed = 500;
 var paddleMat, ballMat;
 
 function create() {
@@ -30,7 +30,8 @@ function create() {
     paddle2.scale = new PIXI.Point(.5,.5);
 
     //Set Physics
-    game.physics.enable([ball,paddle1, paddle2], Phaser.Physics.P2JS);
+    game.physics.p2.enable([ball,paddle1, paddle2], true);
+    ball.body.setCircle(17);
 
     ////Material & Basic Collision
     paddleMat = game.physics.p2.createMaterial('paddleMat');
@@ -49,8 +50,8 @@ function create() {
     game.physics.p2.setWorldMaterial(worldMat, true, true, true, true);
 
     ////Freeze paddle body in place
-    paddle1.body.static = true;
-    paddle2.body.static = true;
+    paddle1.body.kinematic = true;
+    paddle2.body.kinematic = true;
 
     ////Basic pong ball
     ball.body.setZeroDamping();
@@ -76,27 +77,30 @@ function render() {
 
 function handleInput(){
 
+  paddle1.body.setZeroVelocity();
+  paddle2.body.setZeroVelocity();
+
   //Left Side
   if (game.input.keyboard.isDown(Phaser.Keyboard.W) && game.input.keyboard.isDown(Phaser.Keyboard.S)) {
-    //Do nothing. It's about that that finesse.
+    paddle1.body.setZeroVelocity();
   }
   else if (game.input.keyboard.isDown(Phaser.Keyboard.W)) {
-    paddle1.body.y -= paddleMoveSpeed;
+    paddle1.body.moveUp(paddleMoveSpeed);
   }
   else if (game.input.keyboard.isDown(Phaser.Keyboard.S)) {
-    paddle1.body.y += paddleMoveSpeed;
+    paddle1.body.moveDown(paddleMoveSpeed);
   }
 
 
   //Right Side
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-    //Do nothing. It's about that that finesse.
+    paddle2.body.setZeroVelocity();
   }
   else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-    paddle2.body.y -= paddleMoveSpeed;
+    paddle2.body.moveUp(paddleMoveSpeed);
   }
   else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-    paddle2.body.y += paddleMoveSpeed;
+    paddle2.body.moveDown(paddleMoveSpeed);
   }
 
 }
